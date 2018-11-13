@@ -83,11 +83,15 @@ if($person['role'] == 'real') {
 				<h1>Filmographie</h1>
 				<ul>
 					<?php
+                        $allMovies = array();
 						while($movie = $moviesQuery->fetch()) {
-						?>
-							<li><a href="movie.php?id=<?= $movie['id'] ?>"><?= $movie['title'] ?></a></li>
-						<?php
-						}
+                            if (!in_array($movie['id'], $allMovies)) {
+                                array_push($allMovies, $movie['id']);
+                                ?>
+                                <li><a href="movie.php?id=<?= $movie['id'] ?>"><?= $movie['title'] ?></a></li>
+                                <?php
+                            }
+                        }
 					?>
 				</ul>
 			</aside>

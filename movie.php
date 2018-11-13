@@ -13,33 +13,6 @@ $pictureBanner = $pictureBannerQuery->fetch();
 
 $infosMovie = array($movie, $pictureBanner);
 
-$actorsQuery = $bdd->prepare('SELECT * FROM person, movieHasPerson WHERE role = ? AND idMovie = ? AND movieHasPerson.idPerson = person.id');
-$actorsQuery->execute(array('actor', $movie['id']));
-
-$realInfosQuery = $bdd->prepare('
-		SELECT *
-		FROM person, movieHasPerson, personHasPicture, picture
-		WHERE idMovie = ?
-		AND role = ?
-		AND person.id = movieHasPerson.idPerson
-		AND person.id = personHasPicture.idPerson
-		AND personHasPicture.idPicture = picture.id
-	');
-$realInfosQuery->execute(array($movie['id'], 'real'));
-$realInfos = $realInfosQuery->fetch();
-
-$actorsInfosQuery = $bdd->prepare('
-		SELECT *
-		FROM person, movieHasPerson, personHasPicture, picture
-		WHERE idMovie = ?
-		AND role = ?
-		AND person.id = movieHasPerson.idPerson
-		AND person.id = personHasPicture.idPerson
-		AND personHasPicture.idPicture = picture.id
-		ORDER BY lastname ASC
-	');
-$actorsInfosQuery->execute(array($movie['id'], 'actor'));
-
 $imageInfosQuery = $bdd->prepare('
 		SELECT *
 		FROM picture, movieHasPicture
@@ -49,6 +22,7 @@ $imageInfosQuery = $bdd->prepare('
 	');
 $imageInfosQuery->execute(array($movie['id'], 'image'));
 
+$actors = Actor::getActorsByIdmovie($idMovie);
 ?>
 
 <!DOCTYPE html>
@@ -72,8 +46,8 @@ $imageInfosQuery->execute(array($movie['id'], 'image'));
 		<section>
 
 			<article>Avec
-				<?php while($actor = $actorsQuery->fetch()) { ?>
-					<a href="#"><?= $actor['firstname'] . ' ' . $actor['lastname'] . ', ' ?></a>
+				<?php foreach ($actors as $actor) { ?>
+					<a href="#"><?= $actor->getFirstname() . ' ' . $actor->getLastname() ?></a>,
 				<?php } ?>
 			</article>
 
@@ -86,13 +60,13 @@ $imageInfosQuery->execute(array($movie['id'], 'image'));
 				<h2>Réalisateur & acteurs</h2>
 				<h3>Réalisateur</h3>
 
-				<?php getBlock('movie/personInfos', $realInfos); ?>
+				<?php getBlock('movie/personInfos', Director::getDirectorByIdmovie($idMovie)->getBaseInfos()); ?>
 				
 				<h3>Acteurs</h3>
 				
-				<?php 
-					while($actor = $actorsInfosQuery->fetch()) {
-						getBlock('movie/personInfos', $actor);
+				<?php
+					foreach ($actors as $actor) {
+						getBlock('movie/personInfos', $actor->getBaseInfos());
 					}
 				?>
 

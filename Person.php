@@ -2,6 +2,7 @@
 
 abstract class Person
 {
+    private $id;
     private $lastname;
     private $firstname;
     private $birthDate;
@@ -14,12 +15,21 @@ abstract class Person
      * @param $birthDate
      * @param $biography
      */
-    public function __construct($lastname, $firstname, $birthDate, $biography)
+    public function __construct($id, $lastname, $firstname, $birthDate, $biography)
     {
+        $this->id = $id;
         $this->lastname = $lastname;
         $this->firstname = $firstname;
         $this->birthDate = $birthDate;
         $this->biography = $biography;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

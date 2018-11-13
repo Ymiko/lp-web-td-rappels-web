@@ -2,12 +2,14 @@
 
 class Movie
 {
+    private $id;
     private $title;
     private $releaseDate;
     private $synopsis;
     private $rating;
 
-    function __construct($title, $releaseDate, $synopsis, $rating) {
+    function __construct($id, $title, $releaseDate, $synopsis, $rating) {
+        $this->id = $id;
         $this->title = $title;
         $this->releaseDate = $releaseDate;
         $this->synopsis = $synopsis;
@@ -20,7 +22,7 @@ class Movie
         $moviesQuery->execute();
         $allMovies = array();
         while($movie = $moviesQuery->fetch()) {
-            array_push($allMovies, new Movie($movie['title'], $movie['releaseDate'], $movie['synopsis'], $movie['rating']));
+            array_push($allMovies, new Movie($movie['id'], $movie['title'], $movie['releaseDate'], $movie['synopsis'], $movie['rating']));
         }
         return $allMovies;
     }
@@ -32,6 +34,14 @@ class Movie
           'synopsis' => $this->synopsis,
           'rating' => $this->rating
         );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

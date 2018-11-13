@@ -1,11 +1,5 @@
 <?php
 
-if ($data['role'] == 'actor') { 
-	$link = 'person.php?id=';
-} else if($data['role'] == 'real') {
-	$link = 'person.php?id=';
-}
-
 $strIdMovie = '';
 if(strpos($_SERVER['PHP_SELF'], 'index.php') === false) {
 	$strIdMovie = '&idMovie=' . $data['idMovie'];
@@ -13,7 +7,7 @@ if(strpos($_SERVER['PHP_SELF'], 'index.php') === false) {
 
  ?>
 
-<a href="<?= $link . $data['idPerson'] . $strIdMovie ?>">
+<a href="<?= 'person.php?id=' . $data['id'] . $strIdMovie ?>">
 	<aside>
 		<figure class="figcaptionAbove">
 			<figcaption><?= $data['firstname'] . ' ' . $data['lastname'] ?></figcaption>

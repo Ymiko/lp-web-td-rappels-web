@@ -22,7 +22,7 @@ $personInfosQuery->execute(array($idPerson));
 $person = $personInfosQuery->fetch();
 
 $moviesQuery = $bdd->prepare('
-		SELECT *
+		SELECT DISTINCT movie.id, movie.title
 		FROM movie, movieHasPerson
 		WHERE idPerson = ?
 		AND movie.id = movieHasPerson.idMovie
@@ -54,6 +54,7 @@ if($person['role'] == 'real') {
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css?family=Montserrat|Proza+Libre" rel="stylesheet">
 	<meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="pictures/favicon.png">
 </head>
 <body>
 	
@@ -83,14 +84,10 @@ if($person['role'] == 'real') {
 				<h1>Filmographie</h1>
 				<ul>
 					<?php
-                        $allMovies = array();
 						while($movie = $moviesQuery->fetch()) {
-                            if (!in_array($movie['id'], $allMovies)) {
-                                array_push($allMovies, $movie['id']);
-                                ?>
-                                <li><a href="movie.php?id=<?= $movie['id'] ?>"><?= $movie['title'] ?></a></li>
-                                <?php
-                            }
+                    ?>
+                        <li><a href="movie.php?id=<?= $movie['id'] ?>"><?= $movie['title'] ?></a></li>
+                    <?php
                         }
 					?>
 				</ul>

@@ -29,6 +29,21 @@ $moviesQuery = $bdd->prepare('
 	');
 $moviesQuery->execute(array($idPerson));
 
+$real = false;
+if($person['role'] == 'real') {
+    $twoActorsQuery = $bdd->prepare('
+        SELECT *
+		FROM person, movieHasPerson, personHasPicture, picture
+		WHERE role = "actor"
+		AND person.id = movieHasPerson.idPerson
+		AND person.id = personHasPicture.idPerson
+		AND personHasPicture.idPicture = picture.id
+		LIMIT 2
+    ');
+    $twoActorsQuery->execute();
+    $real = true;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -76,6 +91,17 @@ $moviesQuery->execute(array($idPerson));
 					?>
 				</ul>
 			</aside>
+
+            <?php if($real) { ?>
+            <aside id="realANDactor">
+                <h1>Deux acteurs avec lesquels <?= $person['firstname'] . ' ' . $person['lastname'] ?> a le plus tourné</h1>
+                <?php
+                    while($actor = $twoActorsQuery->fetch()) {
+                        getBlock('movie/personInfos', $actor);
+                    }
+                ?>
+            </aside>
+            <?php } ?>
 
 		</section>
 	</main>

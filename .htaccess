@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# redirige tout vers l'index : c'est le point d'entree du MVC
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L]
+
+# interdit l'accès à un dossier même si les fichiers existent
+RewriteRule ^config/.* index.php [L,NC]

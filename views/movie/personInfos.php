@@ -2,12 +2,12 @@
 
 $strIdMovie = '';
 if(strpos($_SERVER['PHP_SELF'], 'index.php') === false) {
-	$strIdMovie = '&idMovie=' . $data['idMovie'];
+	$strIdMovie = '/' . $data['idMovie'];
 }
 
  ?>
 
-<a href="<?= 'person.php?id=' . $data['id'] . $strIdMovie ?>">
+<a href="<?= PATH_FRONT . 'person/' . $data['id'] . $strIdMovie ?>">
 	<aside>
 		<figure class="figcaptionAbove">
 			<figcaption><?= $data['firstname'] . ' ' . $data['lastname'] ?></figcaption>

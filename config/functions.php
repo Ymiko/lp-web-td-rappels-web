@@ -2,5 +2,5 @@
 
 function getBlock($file, $data = [])
 {
-    require $file . '.php';
+    require PATH . $file . '.php';
 }

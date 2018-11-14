@@ -1,7 +1,5 @@
 <?php
 
-require 'Person.php';
-
 class Director extends Person {
 
 
@@ -13,7 +11,7 @@ class Director extends Person {
         parent::__construct($id, $lastname, $firstname, $birthDate, $biography);
     }
 
-    static function getAllDirectors() {
+    public static function getAllDirectors() {
         require 'config/bdd.php';
         $realsInfosQuery = $bdd->prepare('
             SELECT DISTINCT movieHasPerson.idPerson, person.firstname, person.lastname, picture.path, movieHasPerson.role, person.birthDate, person.biography
@@ -32,7 +30,7 @@ class Director extends Person {
         return $allDirectors;
     }
 
-    static function getDirectorByIdmovie($idMovie) {
+    public static function getDirectorByIdmovie($idMovie) {
         require 'config/bdd.php';
         $realsInfosQuery = $bdd->prepare('
             SELECT *
@@ -47,31 +45,5 @@ class Director extends Person {
         $real = $realsInfosQuery->fetch();
         $Director = new Director($real['idPerson'], $real['lastname'], $real['firstname'], $real['birthDate'], $real['biography']);
         return $Director;
-    }
-
-    function getBaseInfos() {
-        require 'config/bdd.php';
-        $realInfosQuery = $bdd->prepare('
-            SELECT *
-            FROM person, movieHasPerson, personHasPicture, picture
-            WHERE person.id = movieHasPerson.idPerson
-            AND person.id = personHasPicture.idPerson
-            AND personHasPicture.idPicture = picture.id
-            AND person.id = ?
-            AND role = ?
-        ');
-        $realInfosQuery->execute(array($this->getId(), 'real'));
-        $real = $realInfosQuery->fetch();
-        return array(
-            'id' => $this->getId(),
-            'lastname' => $this->getLastname(),
-            'firstname' => $this->getFirstname(),
-            'birthDate' => $this->getBirthDate(),
-            'biography' => $this->getBiography(),
-            'role' => $real['role'],
-            'path' => $real['path'],
-            'legend' => $real['legend'],
-            'idMovie' => $real['idMovie']
-        );
     }
 }

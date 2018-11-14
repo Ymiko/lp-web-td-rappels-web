@@ -24,6 +24,44 @@ abstract class Person
         $this->biography = $biography;
     }
 
+    public static function getPersonById($id) {
+        require 'config/bdd.php';
+        $personQuery = $bdd->prepare('SELECT * FROM person, movieHasPerson WHERE id = ? AND person.id = movieHasPerson.idPerson');
+        $personQuery->execute(array($id));
+        $person = $personQuery->fetch();
+        if($person['role'] == 'actor') {
+            return new Actor($person['id'], $person['lastname'], $person['firstname'], $person['birthDate'], $person['biography']);
+        } else if($person['role'] == 'real') {
+            return new Director($person['id'], $person['lastname'], $person['firstname'], $person['birthDate'], $person['biography']);
+        }
+        return false;
+    }
+
+    public function getBaseInfos() {
+        require 'config/bdd.php';
+        $personInfosQuery = $bdd->prepare('
+            SELECT *
+            FROM person, movieHasPerson, personHasPicture, picture
+            WHERE person.id = movieHasPerson.idPerson
+            AND person.id = personHasPicture.idPerson
+            AND personHasPicture.idPicture = picture.id
+            AND person.id = ?
+        ');
+        $personInfosQuery->execute(array($this->getId()));
+        $person = $personInfosQuery->fetch();
+        return array(
+            'id' => $this->getId(),
+            'lastname' => $this->getLastname(),
+            'firstname' => $this->getFirstname(),
+            'birthDate' => $this->getBirthDate(),
+            'biography' => $this->getBiography(),
+            'role' => $person['role'],
+            'path' => $person['path'],
+            'legend' => $person['legend'],
+            'idMovie' => $person['idMovie']
+        );
+    }
+
     /**
      * @return mixed
      */

@@ -3,32 +3,16 @@
 require 'config/config.php';
 $idMovie = filter_input(INPUT_GET, 'id');
 
-$movieQuery = $bdd->prepare('SELECT * FROM movie WHERE id = ?');
-$movieQuery->execute(array($idMovie));
-$movie = $movieQuery->fetch();
-
-$pictureBannerQuery = $bdd->prepare('SELECT * FROM picture, movieHasPicture WHERE idMovie = ? AND type = ? AND movieHasPicture.idPicture = picture.id');
-$pictureBannerQuery->execute(array($movie['id'], 'banner'));
-$pictureBanner = $pictureBannerQuery->fetch();
-
-$infosMovie = array($movie, $pictureBanner);
-
-$imageInfosQuery = $bdd->prepare('
-		SELECT *
-		FROM picture, movieHasPicture
-		WHERE picture.id = movieHasPicture.idPicture
-		AND idMovie = ?
-		AND type = ?
-	');
-$imageInfosQuery->execute(array($movie['id'], 'image'));
-
+$movie = Movie::getMovieById($idMovie);
 $actors = Actor::getActorsByIdmovie($idMovie);
+$baseInfos = $movie->getBaseInfos();
+$infosMovie = array($movie, $baseInfos['banner']);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?= $movie['title'] ?> - Filme !</title>
+	<title><?= $movie->getTitle() ?> - Filme !</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css?family=Montserrat|Proza+Libre" rel="stylesheet">
@@ -37,7 +21,7 @@ $actors = Actor::getActorsByIdmovie($idMovie);
 </head>
 <body>
 	
-    <?php getBlock('header', array('idMovie' => $idMovie, 'idReal' => $realInfos['idPerson'])); ?>
+    <?php getBlock('header', array('idMovie' => $idMovie, 'idReal' => Director::getDirectorByIdmovie($idMovie)->getId())); ?>
 
     <?php getBlock('movie/bannerMovie', $infosMovie); ?>
 
@@ -47,13 +31,13 @@ $actors = Actor::getActorsByIdmovie($idMovie);
 
 			<article>Avec
 				<?php foreach ($actors as $actor) { ?>
-					<a href="#"><?= $actor->getFirstname() . ' ' . $actor->getLastname() ?></a>,
+					<a href="<?= 'person.php?id=' . $actor->getId() . '&idMovie=' . $idMovie ?>"><?= $actor->getFirstname() . ' ' . $actor->getLastname() ?></a>,
 				<?php } ?>
 			</article>
 
 			<article>
 				<h2>Synopsis</h2>
-				<?= $movie['synopsis'] ?>
+				<?= $movie->getSynopsis() ?>
 			</article>
 
 			<section id="realANDactor">
@@ -75,8 +59,9 @@ $actors = Actor::getActorsByIdmovie($idMovie);
 			<aside id="imagesFilm">
 				<h2>Images du film</h2>
 				
-				<?php 
-					while($image = $imageInfosQuery->fetch()) {
+				<?php
+                    $allImages = Movie::getImagesByIdmovie($idMovie);
+					foreach ($allImages as $image) {
 						getBlock('movie/imageInfos', $image);
 					}
 				?>

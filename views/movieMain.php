@@ -7,9 +7,9 @@
     <section>
 
         <article>Avec
-            <?php foreach ($actors as $actor) { ?>
-                <a href="<?= 'person.php?id=' . $actor->getId() . '&idMovie=' . $movie->getId() ?>"><?= $actor->getFirstname() . ' ' . $actor->getLastname() ?></a>,
-            <?php } ?>
+            <?php foreach ($actors as $key => $actor) { ?>
+                <a href="<?= PATH_FRONT . 'person/' . $actor->getId()  ?>"><?= $actor->getFirstname() . ' ' . $actor->getLastname() ?></a>
+            <?php if(count($actors) != $key + 1) echo ','; } ?>
         </article>
 
         <article>

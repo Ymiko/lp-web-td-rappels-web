@@ -8,6 +8,12 @@ class PersonController {
 
         $real = Director::getDirectorByIdmovie($idMovie);
         $person = Person::getPersonById($idPerson);
+
+        if(!$person) {
+            header('Location: /home');
+            exit;
+        }
+
         $infosPerson = $person->getBaseInfos();
         $movies = Movie::getMoviesByIdperson($person->getId());
 

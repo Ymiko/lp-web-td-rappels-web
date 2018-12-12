@@ -8,4 +8,9 @@ class HomeController {
         $actors = Actor::getAllActors();
         getBlock('views/home', array($movies, $reals, $actors));
     }
+
+    public static function faq() {
+        getBlock('views/faq');
+    }
+
 }

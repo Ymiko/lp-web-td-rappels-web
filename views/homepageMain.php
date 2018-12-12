@@ -10,15 +10,12 @@
 
     <section>
         <h2>Les films</h2>
+        <a href="<?= PATH_FRONT ?>movieRandom" title="Voir un film au hasard"><img class="random" src="pictures/random.png"></a><br>
         <?php
 
         foreach($movies as $movie) {
             ?>
-            <a href="<?= PATH_FRONT ?>movie/<?= $movie->getId() ?>" class="aFilm">
-                <div class="film">
-                    <?= $movie->getTitle() ?>
-                </div>
-            </a>
+            <a href="<?= PATH_FRONT ?>movie/<?= $movie->getId() ?>"><img class="imgMovie" src="<?= $movie->getAffiche() ?>"></a>
             <?php
         }
         ?>

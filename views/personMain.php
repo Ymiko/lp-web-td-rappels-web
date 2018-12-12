@@ -4,15 +4,20 @@
     $movies = $data[2];
 ?>
 
-<main>
-    <section>
-        <h1><?= $person->getFirstname() . ' ' . $person->getLastname() ?></h1>
-    </section>
+<section id="banniereActor">
+    <div id="banniereInformations" class="banniereActorInfos">
 
-    <section>
         <img src="<?= $infosPerson['path'] ?>" alt="<?= $infosPerson['legend'] ?>">
+        <h1><?= $person->getFirstname() . ' ' . $person->getLastname() ?></h1>
         <p>Né le <time datetime="<?= date('Y-m-d', strtotime($person->getBirthDate())) ?>"><?= strftime('%d %B %Y', strtotime($person->getBirthDate())) ?></time></p>
 
+    </div>
+
+</section>
+
+<main>
+
+    <section>
         <aside>
             <h1>Biographie</h1>
             <?= str_replace('. ', '.<br /><br />', $person->getBiography()) ?>
@@ -20,15 +25,13 @@
 
         <aside>
             <h1>Filmographie</h1>
-            <ul>
                 <?php
                 foreach ($movies as $movie) {
                     ?>
-                    <li><a href="<?= PATH_FRONT ?>movie/<?= $movie->getId() ?>"><?= $movie->getTitle() ?></a></li>
+                    <a href="<?= PATH_FRONT ?>movie/<?= $movie->getId() ?>"><img class="imgMovie" src="<?= $movie->getAffiche() ?>"></a>
                     <?php
                 }
                 ?>
-            </ul>
         </aside>
 
     </section>

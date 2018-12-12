@@ -1,6 +1,6 @@
 <?php
 
-abstract class Person
+class Person
 {
     private $id;
     private $lastname;
@@ -22,6 +22,34 @@ abstract class Person
         $this->firstname = $firstname;
         $this->birthDate = $birthDate;
         $this->biography = $biography;
+    }
+
+    public static function delete($id) {
+        require 'config/bdd.php';
+        $query = $bdd->prepare('DELETE FROM person WHERE id = ?');
+        $query->execute(array($id));
+    }
+
+    public static function createPerson($lastname, $firstname, $birthdate, $biography) {
+        if(!empty($lastname) && !empty($firstname) && !empty($birthdate) && !empty($biography)) {
+            require 'config/bdd.php';
+            $queryAdd = $bdd->prepare('INSERT INTO person(lastname, firstname, birthdate, biography) VALUES(?,?,?,?)');
+            $queryAdd->execute(array($lastname, $firstname, $birthdate, $biography));
+        } else {
+            echo '<script>alert("Tous les champs sont obligatoires !")</script>';
+        }
+    }
+
+    public static function getAllPersons()
+    {
+        require 'config/bdd.php';
+        $personsQuery = $bdd->prepare('SELECT * FROM person');
+        $personsQuery->execute();
+        $allPersons = array();
+        while ($person = $personsQuery->fetch()) {
+            array_push($allPersons, new Person($person['id'], $person['lastname'], $person['firstname'], $person['birthdate'], $person['biography']));
+        }
+        return $allPersons;
     }
 
     public static function getPersonById($id) {

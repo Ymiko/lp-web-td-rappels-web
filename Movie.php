@@ -16,6 +16,45 @@ class Movie
         $this->rating = $rating;
     }
 
+    public static function getIdMovies() {
+        require 'config/bdd.php';
+        $query = $bdd->prepare('SELECT id FROM movie');
+        $query->execute();
+        $tabIdMovie = [];
+        while($idMovie = $query->fetch()) {
+            $tabIdMovie[] = $idMovie['id'];
+        }
+        return $tabIdMovie;
+    }
+
+    public static function delete($id) {
+        require 'config/bdd.php';
+        $query = $bdd->prepare('DELETE FROM movie WHERE id = ?');
+        $query->execute(array($id));
+    }
+
+    public static function createMovie($title, $releaseDate, $synopsis, $rating) {
+        if(!empty($title) && !empty($releaseDate) && !empty($synopsis) && !empty($rating)) {
+            require 'config/bdd.php';
+            $queryAdd = $bdd->prepare('INSERT INTO movie(title, releaseDate, synopsis, rating) VALUES(?,?,?,?)');
+            $queryAdd->execute(array($title, $releaseDate, $synopsis, $rating));
+        } else {
+            echo '<script>alert("Tous les champs sont obligatoires !")</script>';
+        }
+    }
+
+    public function getAffiche() {
+        require 'config/bdd.php';
+        $query = $bdd->prepare('SELECT path
+                                FROM picture, movieHasPicture
+                                WHERE movieHasPicture.idPicture = picture.id 
+                                AND movieHasPicture.idMovie = ?
+                                AND movieHasPicture.type = ?');
+        $query->execute(array($this->getId(), 'affiche'));
+        $affiche = $query->fetch()[0];
+        return $affiche;
+    }
+
     public static function getAllMovies() {
         require 'config/bdd.php';
         $moviesQuery = $bdd->prepare('SELECT * FROM movie ORDER BY title ASC');
